@@ -29,15 +29,14 @@
       text-align: center;
     }
 
-    /* Fullscreen particle canvas behind content */
-    #particles {
+    canvas {
       position: fixed;
-      top: 0; left: 0;
+      top: 0;
+      left: 0;
+      z-index: 0;
       width: 100vw;
       height: 100vh;
-      z-index: 0;
       pointer-events: none;
-      background: black;
     }
 
     .clock {
@@ -47,7 +46,6 @@
       line-height: 1;
       position: relative;
       z-index: 1;
-      /* Remove glow */
       text-shadow: none;
     }
 
@@ -82,7 +80,7 @@
   </style>
 </head>
 <body>
-  <canvas id="particles"></canvas>
+  <canvas id="binaryCanvas"></canvas>
 
   <div class="clock">
     <span>1</span>
@@ -92,62 +90,69 @@
   <div class="subtitle">AI the Pearl</div>
 
   <script>
-    const canvas = document.getElementById('particles');
+    const canvas = document.getElementById('binaryCanvas');
     const ctx = canvas.getContext('2d');
-    let w, h;
 
-    function resize() {
+    let w = canvas.width = window.innerWidth;
+    let h = canvas.height = window.innerHeight;
+
+    window.addEventListener('resize', () => {
       w = canvas.width = window.innerWidth;
       h = canvas.height = window.innerHeight;
-    }
-    window.addEventListener('resize', resize);
-    resize();
+      initDigits();
+    });
 
-    class Particle {
+    class Digit {
       constructor() {
+        this.reset();
+      }
+
+      reset() {
         this.x = Math.random() * w;
         this.y = Math.random() * h;
-        this.size = Math.random() * 2 + 0.5;
-        this.speedX = (Math.random() - 0.5) * 0.3;
-        this.speedY = (Math.random() - 0.5) * 0.3;
-        this.opacity = Math.random() * 0.8 + 0.2;
+        this.size = Math.random() * 16 + 8;
+        this.opacity = Math.random() * 0.7 + 0.3;
+        this.speedY = Math.random() * 0.3 + 0.1;
+        this.char = Math.random() > 0.5 ? '1' : '0';
       }
+
       update() {
-        this.x += this.speedX;
-        this.y += this.speedY;
-        if(this.x > w) this.x = 0;
-        if(this.x < 0) this.x = w;
-        if(this.y > h) this.y = 0;
-        if(this.y < 0) this.y = h;
+        this.y -= this.speedY;
+        if (this.y < -20) {
+          this.reset();
+          this.y = h + 20;
+        }
       }
+
       draw() {
-        ctx.beginPath();
-        ctx.fillStyle = `rgba(255, 255, 255, ${this.opacity})`;
-        ctx.shadowColor = '#fff';
-        ctx.shadowBlur = 8;
-        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-        ctx.fill();
+        ctx.font = `${this.size}px 'DS-Digital', sans-serif`;
+        ctx.fillStyle = `rgba(0, 255, 0, ${this.opacity})`; // hacking green
+        ctx.shadowColor = "rgba(0, 255, 0, 0.8)";
+        ctx.shadowBlur = 10;
+        ctx.fillText(this.char, this.x, this.y);
       }
     }
 
-    let particlesArray = [];
+    let digits = [];
 
-    function initParticles(count=120) {
-      particlesArray = [];
-      for(let i = 0; i < count; i++) {
-        particlesArray.push(new Particle());
+    function initDigits() {
+      digits = [];
+      let count = Math.floor(w * h / 3000); // dynamic count based on screen
+      for (let i = 0; i < count; i++) {
+        digits.push(new Digit());
       }
     }
-    initParticles();
 
     function animate() {
       ctx.clearRect(0, 0, w, h);
-      particlesArray.forEach(p => {
-        p.update();
-        p.draw();
+      digits.forEach(d => {
+        d.update();
+        d.draw();
       });
       requestAnimationFrame(animate);
     }
+
+    initDigits();
     animate();
   </script>
 </body>
