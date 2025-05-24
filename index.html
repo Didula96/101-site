@@ -1,12 +1,12 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" >
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>AI the Pearl</title>
-  <link href="https://fonts.cdnfonts.com/css/ds-digital" rel="stylesheet">
-
+  <link href="https://fonts.cdnfonts.com/css/ds-digital" rel="stylesheet" />
   <style>
+    /* Reset */
     * {
       box-sizing: border-box;
       margin: 0;
@@ -14,80 +14,206 @@
     }
 
     body {
+      background-color: #000;
+      font-family: 'DS-Digital', monospace, sans-serif;
       height: 100vh;
-      font-family: 'DS-Digital', sans-serif;
       display: flex;
       justify-content: center;
       align-items: center;
-      flex-direction: column;
-      background: linear-gradient(-45deg, #000000, #1f1f1f, #101010, #2e2e2e);
-      background-size: 400% 400%;
-      animation: gradientBG 15s ease infinite;
-      color: #00ffcc;
+      color: #fff;
+      overflow: hidden;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
     }
 
-    @keyframes gradientBG {
-      0% { background-position: 0% 50%; }
-      50% { background-position: 100% 50%; }
-      100% { background-position: 0% 50%; }
-    }
-
+    /* Container with jet black background + glow + blur */
     .container {
-      backdrop-filter: blur(10px);
-      background: rgba(0, 0, 0, 0.3);
-      padding: 2rem 3rem;
-      border-radius: 1.5rem;
-      box-shadow: 0 0 20px rgba(0, 255, 204, 0.2);
+      position: relative;
+      background: #000000;
+      border-radius: 2rem;
+      padding: 3rem 5rem;
+      box-shadow:
+        0 0 10px #fff,
+        0 0 30px #fff,
+        0 0 40px #fffcc;
+      backdrop-filter: blur(15px);
+      -webkit-backdrop-filter: blur(15px);
+      overflow: hidden;
+      width: fit-content;
+      max-width: 95vw;
       text-align: center;
+      z-index: 1;
     }
 
+    /* Animated subtle radial background */
+    .container::before {
+      content: "";
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background:
+        radial-gradient(circle at 25% 25%, #fff 0, transparent 60%),
+        radial-gradient(circle at 75% 75%, #fff 0, transparent 60%);
+      background-repeat: no-repeat;
+      background-size: 20% 20%;
+      animation: pulseBackground 6s ease-in-out infinite alternate;
+      opacity: 0.15;
+      z-index: 0;
+      border-radius: 2rem;
+      pointer-events: none;
+      filter: drop-shadow(0 0 6px #fff);
+    }
+
+    /* Glowing animated circuit lines - SVG overlay */
+    .circuit-svg {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+      pointer-events: none;
+      opacity: 0.1;
+      filter: drop-shadow(0 0 4px #fff);
+    }
+
+    @keyframes pulseBackground {
+      0% {
+        background-position: 25% 25%, 75% 75%;
+        opacity: 0.12;
+      }
+      100% {
+        background-position: 20% 20%, 80% 80%;
+        opacity: 0.18;
+      }
+    }
+
+    /* Clock styling */
     .clock {
-      font-size: 18rem;
+      position: relative;
       display: flex;
-      gap: 1rem;
-      justify-content: center;
-      text-shadow: 0 0 20px #00ffcc, 0 0 10px #00ffcc;
-      line-height: 1;
+      gap: 1.5rem;
+      font-size: 18rem;
+      letter-spacing: 0.1em;
+      color: #fff;
+      text-shadow:
+        0 0 10px #fff,
+        0 0 30px #fff,
+        0 0 40px #fffcc;
+      animation: flicker 3s infinite alternate ease-in-out;
+      z-index: 1;
     }
 
+    /* Flickering neon effect */
+    @keyframes flicker {
+      0%, 19%, 21%, 23%, 25%, 54%, 56%, 100% {
+        opacity: 1;
+      }
+      20%, 22%, 24%, 55% {
+        opacity: 0.8;
+      }
+    }
+
+    /* Animate each digit slightly */
+    .clock span {
+      display: inline-block;
+      animation: pulseDigit 3s ease-in-out infinite alternate;
+    }
+    .clock span:nth-child(odd) {
+      animation-delay: 0s;
+    }
+    .clock span:nth-child(even) {
+      animation-delay: 1.5s;
+    }
+    @keyframes pulseDigit {
+      0%, 100% {
+        transform: scale(1);
+        filter: drop-shadow(0 0 15px #fff);
+      }
+      50% {
+        transform: scale(1.05);
+        filter: drop-shadow(0 0 25px #fff);
+      }
+    }
+
+    /* Subtitle */
     .subtitle {
-      margin-top: 1.5rem;
-      font-size: 2rem;
-      letter-spacing: 4px;
+      position: relative;
+      margin-top: 1.8rem;
+      font-size: 2.5rem;
+      letter-spacing: 6px;
+      color: #fffcc;
       text-transform: uppercase;
-      color: #ffffffcc;
-      text-shadow: 0 0 10px #00ffcc66;
+      font-weight: 700;
+      text-shadow: 0 0 12px #fffcc;
+      z-index: 1;
     }
 
+    /* Glowing underline */
+    .subtitle::after {
+      content: "";
+      display: block;
+      margin: 0.8rem auto 0;
+      width: 60%;
+      height: 3px;
+      background: linear-gradient(90deg, #fff, #ccc);
+      border-radius: 5px;
+      filter: drop-shadow(0 0 10px #fffcc);
+    }
+
+    /* Responsive adjustments */
     @media (max-width: 768px) {
       .clock {
         font-size: 10rem;
-        gap: 0.5rem;
+        gap: 1rem;
       }
-
       .subtitle {
-        font-size: 1.5rem;
+        font-size: 1.8rem;
+        letter-spacing: 4px;
       }
     }
 
     @media (max-width: 480px) {
       .clock {
         font-size: 6rem;
+        gap: 0.6rem;
       }
-
       .subtitle {
         font-size: 1.2rem;
+        letter-spacing: 3px;
       }
     }
   </style>
 </head>
 <body>
   <div class="container">
-    <div class="clock">
+    <svg class="circuit-svg" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet" >
+      <g stroke="#fff" stroke-width="1" stroke-opacity="0.2" fill="none" >
+        <!-- Outer square -->
+        <rect x="10" y="10" width="180" height="180" rx="20" ry="20"/>
+        <!-- Inner lines -->
+        <line x1="10" y1="50" x2="190" y2="50" />
+        <line x1="10" y1="150" x2="190" y2="150" />
+        <line x1="50" y1="10" x2="50" y2="190" />
+        <line x1="150" y1="10" x2="150" y2="190" />
+        <!-- Removed central rounded square -->
+
+        <!-- Circuit connection lines -->
+        <line x1="80" y1="100" x2="50" y2="100" />
+        <line x1="120" y1="100" x2="150" y2="100" />
+        <line x1="100" y1="80" x2="100" y2="50" />
+        <line x1="100" y1="120" x2="100" y2="150" />
+        <circle cx="50" cy="100" r="3" fill="#fff" />
+        <circle cx="150" cy="100" r="3" fill="#fff" />
+        <circle cx="100" cy="50" r="3" fill="#fff" />
+        <circle cx="100" cy="150" r="3" fill="#fff" />
+      </g>
+    </svg>
+
+    <div class="clock" aria-label="Clock digits">
       <span>1</span>
       <span>0</span>
       <span>1</span>
     </div>
+
     <div class="subtitle">AI the Pearl</div>
   </div>
 </body>
